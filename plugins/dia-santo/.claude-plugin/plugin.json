@@ -1,0 +1,9 @@
+{
+  "name": "dia-santo",
+  "version": "0.1.0",
+  "description": "Faixa acima do prompt com a data, o dia da semana e o santo do dia (offline, America/Sao_Paulo).",
+  "author": {
+    "name": "monkfrodo"
+  },
+  "types": "./types/index.d.ts"
+}

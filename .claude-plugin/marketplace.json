@@ -1,0 +1,14 @@
+{
+  "name": "claude-mods",
+  "owner": {
+    "name": "monkfrodo"
+  },
+  "description": "Mods do Claude Code de monkfrodo.",
+  "plugins": [
+    {
+      "name": "dia-santo",
+      "source": "./plugins/dia-santo",
+      "description": "Faixa acima do prompt com a data, o dia da semana e o santo do dia."
+    }
+  ]
+}
