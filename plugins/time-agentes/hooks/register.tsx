@@ -2,12 +2,18 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Registro } from '../types'
-import { barra, compacto, corDaFatia, iconeStatus, modeloDoTipo, totalTokens } from './time'
+import { estadoDoStatus, robo } from './robo'
+import { barra, compacto, corDaFatia, modeloDoTipo, totalTokens } from './time'
 
 const PAINEL = 'time-agentes'
 const REFRESH_MS = 2000
+const QUADRO_MS = 600
+// Passos seguidos sem ninguem trabalhando antes de a animacao parar.
+const OCIOSOS_PARA_PARAR = 4
 
 const registro = atom({ plugin: 'time-agentes', key: 'registro' } as const, {} as Registro)
+const quadro = atom({ plugin: 'time-agentes', key: 'quadro' } as const, 0)
+const principalAtivo = atom({ plugin: 'time-agentes', key: 'principalAtivo' } as const, false)
 const limite5h = atom({ plugin: 'time-agentes', key: 'limite5h' } as const, null as number | null)
 
 // Atualiza nomes/status dos agentes e o limite de 5h; falha so deixa como estava.
@@ -29,8 +35,41 @@ async function atualizar($: EngineInterface): Promise<void> {
   }
 }
 
+type Animacao = { timer?: { cancel: () => void }; ociosos: number }
+
+/** Avanca o quadro; para o timer depois de alguns passos sem ninguem trabalhando. */
+async function girar($: EngineInterface, anim: Animacao): Promise<void> {
+  try {
+    await update($, quadro, q => q + 1)
+    const reg = await read($, registro)
+    const trabalhando =
+      (await read($, principalAtivo)) || Object.values(reg).some(a => a.status === 'running')
+    anim.ociosos = trabalhando ? 0 : anim.ociosos + 1
+    if (anim.ociosos >= OCIOSOS_PARA_PARAR) {
+      anim.timer?.cancel()
+      anim.timer = undefined
+    }
+  } catch {
+    // nunca propagar
+  }
+}
+
+/** Liga a animacao se estiver parada. */
+function acordar($: EngineInterface, anim: Animacao): void {
+  anim.ociosos = 0
+  if (anim.timer) return
+  try {
+    anim.timer = $.clock.every(QUADRO_MS, () => {
+      void girar($, anim)
+    })
+  } catch {
+    // sem timer: os robos ficam parados
+  }
+}
+
 export const register: Register = on => {
   let timer: { cancel: () => void } | undefined
+  const anim: Animacao = { ociosos: 0 }
 
   on('session.start', async ($, e, next) => {
     try {
@@ -47,14 +86,35 @@ export const register: Register = on => {
 
   on('command.run', { command: 'agentes' }, async $ => {
     await atualizar($)
+    acordar($, anim)
     await $.ui.open({ id: PAINEL, title: 'Time de agentes' })
     return { text: 'Painel de agentes aberto.' }
   })
+
+  on('turn.start', async ($, e, next) => {
+    try {
+      await update($, principalAtivo, () => true)
+      acordar($, anim)
+    } catch {
+      // nunca propagar
+    }
+    return next(e)
+  }).catch(($, e, next) => next(e))
+
+  on('turn.complete', async ($, e, next) => {
+    try {
+      if (e.agentId === undefined) await update($, principalAtivo, () => false)
+    } catch {
+      // nunca propagar
+    }
+    return next(e)
+  }).catch(($, e, next) => next(e))
 
   // Cada subagente roda no modelo da tabela (a menos que a chamada ja tenha pedido um).
   on('agent.spawn', async ($, e, next) => {
     const model = modeloDoTipo(e.subagentType, e.model)
     const r = await next(model && model !== e.model ? { ...e, model } : e)
+    acordar($, anim)
     try {
       if ('agentId' in r && r.agentId) {
         const id = r.agentId
@@ -92,6 +152,8 @@ export const register: Register = on => {
     const { Box, Text } = $.ui.resolve(e)
     const reg = await read($, registro)
     const h5 = await read($, limite5h)
+    const q = await read($, quadro)
+    const principalOn = await read($, principalAtivo)
     const total = totalTokens(reg)
     const ids = Object.keys(reg)
     const maior = Math.max(1, ...ids.map(id => reg[id]?.tokens ?? 0))
@@ -116,14 +178,27 @@ export const register: Register = on => {
         {ids.map(id => {
           const a = reg[id]
           if (!a) return null
-          const st = iconeStatus(a.status)
+          const sp = robo(estadoDoStatus(a.status, id === 'main' && principalOn), q + id.length)
           return (
-            <Box key={id} gap={1}>
-              <Text color={st.cor}>{st.icone}</Text>
-              <Text bold={id === 'main'}>{(id === 'main' ? 'principal' : (a.nome ?? id)).padEnd(16).slice(0, 16)}</Text>
-              <Text color={corDaFatia(a.tokens, Math.max(total, 1))}>{barra(a.tokens, maior)}</Text>
-              <Text>{compacto(a.tokens)}</Text>
-              <Text dimColor>{a.model ?? ''}</Text>
+            <Box key={id} gap={2}>
+              <Box flexDirection="column">
+                {sp.linhas.map((linha, i) => (
+                  <Text key={`r${i}`} color={sp.cor}>
+                    {linha}
+                  </Text>
+                ))}
+              </Box>
+              <Box flexDirection="column">
+                <Box gap={1}>
+                  <Text bold={id === 'main'}>{id === 'main' ? 'principal' : (a.nome ?? id)}</Text>
+                  <Text color={sp.cor}>{sp.etiqueta}</Text>
+                </Box>
+                <Box gap={1}>
+                  <Text color={corDaFatia(a.tokens, Math.max(total, 1))}>{barra(a.tokens, maior)}</Text>
+                  <Text>{compacto(a.tokens)}</Text>
+                </Box>
+                <Text dimColor>{a.model ?? ' '}</Text>
+              </Box>
             </Box>
           )
         })}
