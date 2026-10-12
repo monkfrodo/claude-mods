@@ -3,7 +3,7 @@ import type { EngineInterface, Register } from 'claude-code'
 
 import type { Registro } from '../types'
 import { estadoDoStatus, robo } from './robo'
-import { barra, compacto, corDaFatia, modeloDoTipo, totalTokens } from './time'
+import { compacto, corDoUso, modeloDoTipo, segmentos, totalTokens } from './time'
 
 const PAINEL = 'time-agentes'
 const REFRESH_MS = 2000
@@ -166,13 +166,17 @@ export const register: Register = on => {
           <Text bold color="magenta">
             Total
           </Text>
-          <Text color="cyan">{barra(total, Math.max(total, 1))}</Text>
           <Text>{compacto(total)} tokens</Text>
         </Box>
         {h5 !== null && (
           <Box gap={1}>
             <Text bold>Limite 5h</Text>
-            <Text color={corDaFatia(h5, 100)}>{barra(h5, 100)}</Text>
+            <Text>
+              <Text color={corDoUso(h5)}>{'█'.repeat(segmentos(h5, 100, 14).cheias)}</Text>
+              <Text color="gray" dimColor>
+                {'█'.repeat(segmentos(h5, 100, 14).vazias)}
+              </Text>
+            </Text>
             <Text>{Math.round(h5)}% usado</Text>
           </Box>
         )}
@@ -196,7 +200,12 @@ export const register: Register = on => {
                   <Text color={sp.cor}>{sp.etiqueta}</Text>
                 </Box>
                 <Box gap={1}>
-                  <Text color={corDaFatia(a.tokens, Math.max(total, 1))}>{barra(a.tokens, maior)}</Text>
+                  <Text>
+                    <Text color={sp.cor}>{'█'.repeat(segmentos(a.tokens, maior, 14).cheias)}</Text>
+                    <Text color="gray" dimColor>
+                      {'█'.repeat(segmentos(a.tokens, maior, 14).vazias)}
+                    </Text>
+                  </Text>
                   <Text>{compacto(a.tokens)}</Text>
                 </Box>
                 <Text dimColor>{a.model ?? ' '}</Text>
