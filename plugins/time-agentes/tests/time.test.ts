@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { barra, compacto, modeloDoTipo, totalTokens } from '../hooks/time'
+import { barra, compacto, corDaFatia, iconeStatus, modeloDoTipo, totalTokens } from '../hooks/time'
 
 describe('time-agentes', () => {
   test('modelo da tabela, e o pedido manda', () => {
@@ -20,5 +20,20 @@ describe('time-agentes', () => {
     expect(compacto(1234)).toBe('1,2k')
     expect(compacto(2_500_000)).toBe('2,5M')
     expect(totalTokens({ a: { tokens: 3 }, b: { tokens: 4 } })).toBe(7)
+  })
+})
+
+describe('visual', () => {
+  test('cor pela fatia do total', () => {
+    expect(corDaFatia(1, 10)).toBe('green')
+    expect(corDaFatia(5, 10)).toBe('yellow')
+    expect(corDaFatia(9, 10)).toBe('red')
+    expect(corDaFatia(1, 0)).toBe('green')
+  })
+
+  test('icone por status', () => {
+    expect(iconeStatus('running').icone).toBe('●')
+    expect(iconeStatus('failed').cor).toBe('red')
+    expect(iconeStatus(undefined).icone).toBe('○')
   })
 })

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { ALTURA, FAIXAS, desenhar, mover, novo, passo } from '../hooks/jogo'
+import { ALTURA, FAIXAS, celulas, desenhar, mover, novo, passo } from '../hooks/jogo'
 
 describe('corrida', () => {
   test('carro fica dentro das faixas', () => {
@@ -29,5 +29,15 @@ describe('corrida', () => {
 
   test('pista tem ALTURA linhas', () => {
     expect(desenhar(novo())).toHaveLength(ALTURA)
+  })
+})
+
+describe('celulas', () => {
+  test('carro amarelo vivo, vermelho depois de bater', () => {
+    const vivo = celulas(novo())
+    expect(vivo).toHaveLength(ALTURA)
+    expect(vivo[ALTURA - 1]?.[1]?.cor).toBe('yellow')
+    const batido = { ...novo(), vivo: false }
+    expect(celulas(batido)[ALTURA - 1]?.[1]?.cor).toBe('red')
   })
 })

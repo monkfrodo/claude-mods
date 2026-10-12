@@ -23,12 +23,12 @@ export const register: Register = on => {
       if ((await read($, abertos)).includes(id)) return next(e)
 
       const { Box, Button, Text } = $.ui.resolve(e)
-      const marca = e.props.isErrored ? '✗' : e.props.isRunning ? '…' : '✓'
+      const marca = e.props.isErrored ? '✗' : e.props.isRunning ? '●' : '✓'
+      const cor = e.props.isErrored ? 'red' : e.props.isRunning ? 'yellow' : 'green'
       return (
         <Box key={`visao-limpa-uso-${id}`}>
-          <Text dimColor>
-            {marca} {descrever(e.props.tool, e.props.input)}{' '}
-          </Text>
+          <Text color={cor}>{marca} </Text>
+          <Text dimColor>{descrever(e.props.tool, e.props.input)} </Text>
           <Button
             key={`ver-uso-${id}`}
             label="ver"

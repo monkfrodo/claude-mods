@@ -47,6 +47,23 @@ export function passo(j: Jogo): Jogo {
   }
 }
 
+export type Celula = { txt: string; cor?: string }
+
+/** Pista como matriz de celulas com cor: carro amarelo (vermelho ao bater), obstaculo vermelho. */
+export function celulas(j: Jogo): Celula[][] {
+  const linhas: Celula[][] = []
+  for (let y = 0; y < ALTURA; y++) {
+    const linha: Celula[] = []
+    for (let f = 0; f < FAIXAS; f++) {
+      if (y === ALTURA - 1 && f === j.carro) linha.push(j.vivo ? { txt: ' 🏎 ', cor: 'yellow' } : { txt: ' 💥 ', cor: 'red' })
+      else if (j.obstaculos.some(o => o.y === y && o.faixa === f)) linha.push({ txt: ' ▓▓ ', cor: 'red' })
+      else linha.push({ txt: '    ' })
+    }
+    linhas.push(linha)
+  }
+  return linhas
+}
+
 /** Linhas de texto da pista (ALTURA linhas) para desenhar. */
 export function desenhar(j: Jogo): string[] {
   const linhas: string[] = []

@@ -19,6 +19,31 @@ export function barra(parte: number, total: number, largura = 12): string {
   return '█'.repeat(cheias) + '░'.repeat(largura - cheias)
 }
 
+/** Cor da barra pela fatia do total: ate 1/3 verde, ate 2/3 amarelo, acima vermelho. */
+export function corDaFatia(parte: number, total: number): 'green' | 'yellow' | 'red' {
+  const f = total > 0 ? parte / total : 0
+  return f > 2 / 3 ? 'red' : f > 1 / 3 ? 'yellow' : 'green'
+}
+
+/** Icone e cor do status de um agente. */
+export function iconeStatus(status?: string): { icone: string; cor: string } {
+  switch (status) {
+    case 'running':
+      return { icone: '●', cor: 'green' }
+    case 'waiting':
+    case 'idle':
+    case 'pending':
+      return { icone: '◐', cor: 'yellow' }
+    case 'completed':
+      return { icone: '✓', cor: 'gray' }
+    case 'failed':
+    case 'killed':
+      return { icone: '✗', cor: 'red' }
+    default:
+      return { icone: '○', cor: 'gray' }
+  }
+}
+
 /** 1234 -> "1,2k"; 2_500_000 -> "2,5M". */
 export function compacto(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace('.', ',')}M`

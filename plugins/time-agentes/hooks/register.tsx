@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { Registro } from '../types'
-import { barra, compacto, modeloDoTipo, totalTokens } from './time'
+import { barra, compacto, corDaFatia, iconeStatus, modeloDoTipo, totalTokens } from './time'
 
 const PAINEL = 'time-agentes'
 const REFRESH_MS = 2000
@@ -97,24 +97,34 @@ export const register: Register = on => {
     const maior = Math.max(1, ...ids.map(id => reg[id]?.tokens ?? 0))
 
     return (
-      <Box flexDirection="column">
-        <Text bold>
-          Total {barra(total, Math.max(total, 1))} {compacto(total)} tokens
-        </Text>
-        {h5 !== null && (
-          <Text>
-            Limite 5h {barra(h5, 100)} {Math.round(h5)}% usado
+      <Box flexDirection="column" borderStyle="round" borderColor="magenta" paddingX={1}>
+        <Box gap={1}>
+          <Text bold color="magenta">
+            Total
           </Text>
+          <Text color="cyan">{barra(total, Math.max(total, 1))}</Text>
+          <Text>{compacto(total)} tokens</Text>
+        </Box>
+        {h5 !== null && (
+          <Box gap={1}>
+            <Text bold>Limite 5h</Text>
+            <Text color={corDaFatia(h5, 100)}>{barra(h5, 100)}</Text>
+            <Text>{Math.round(h5)}% usado</Text>
+          </Box>
         )}
         {ids.length === 0 && <Text dimColor>Nenhum agente ainda.</Text>}
         {ids.map(id => {
           const a = reg[id]
           if (!a) return null
+          const st = iconeStatus(a.status)
           return (
-            <Text key={id} dimColor={a.status === 'completed'}>
-              {(id === 'main' ? 'principal' : (a.nome ?? id)).padEnd(18).slice(0, 18)} {barra(a.tokens, maior)}{' '}
-              {compacto(a.tokens)} {a.status ?? ''} {a.model ?? ''}
-            </Text>
+            <Box key={id} gap={1}>
+              <Text color={st.cor}>{st.icone}</Text>
+              <Text bold={id === 'main'}>{(id === 'main' ? 'principal' : (a.nome ?? id)).padEnd(16).slice(0, 16)}</Text>
+              <Text color={corDaFatia(a.tokens, Math.max(total, 1))}>{barra(a.tokens, maior)}</Text>
+              <Text>{compacto(a.tokens)}</Text>
+              <Text dimColor>{a.model ?? ''}</Text>
+            </Box>
           )
         })}
       </Box>

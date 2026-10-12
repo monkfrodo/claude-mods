@@ -22,6 +22,19 @@ export function linhaLimite(kind: string, percentUsed: number): string {
   return `${NOMES[kind] ?? kind} ${barra(restante)} ${restante}%`
 }
 
+/** Cor da barra pelo que resta: verde, amarelo, vermelho. */
+export function corDoNivel(restante: number): 'green' | 'yellow' | 'red' {
+  if (restante > 50) return 'green'
+  if (restante > 20) return 'yellow'
+  return 'red'
+}
+
+/** Partes de um limite para desenhar com cor: nome, barra, percentual do que resta. */
+export function partesLimite(kind: string, percentUsed: number) {
+  const restante = Math.round(Math.min(100, Math.max(0, 100 - percentUsed)))
+  return { nome: NOMES[kind] ?? kind, barra: barra(restante), restante, cor: corDoNivel(restante) }
+}
+
 /** Linha inteira da faixa; vazia quando nao ha nenhum dado. */
 export function montarLinha(
   limites: ReadonlyArray<{ kind: string; percentUsed: number }>,
