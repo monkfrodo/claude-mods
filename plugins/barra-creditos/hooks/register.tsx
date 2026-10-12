@@ -38,19 +38,24 @@ export const register: Register = on => {
       const gasto = await read($, custo)
       if (!montarLinha(lista, gasto)) return next(e)
       const { Box, Text } = $.ui.resolve(e)
+      // Outros mods tambem desenham aqui: empilha com o que vem abaixo.
+      const abaixo = await next(e)
       return (
-        <Box key="barra-creditos" gap={2}>
-          {lista.map(l => {
-            const p = partesLimite(l.kind, l.percentUsed)
-            return (
-              <Box key={l.kind} gap={1}>
-                <Text bold>{p.nome}</Text>
-                <Text color={p.cor}>{p.barra}</Text>
-                <Text color={p.cor}>{p.restante}%</Text>
-              </Box>
-            )
-          })}
-          {gasto !== null && <Text color="cyan">${gasto.toFixed(2)}</Text>}
+        <Box key="barra-creditos" flexDirection="column">
+          <Box gap={2}>
+            {lista.map(l => {
+              const p = partesLimite(l.kind, l.percentUsed)
+              return (
+                <Box key={l.kind} gap={1}>
+                  <Text bold>{p.nome}</Text>
+                  <Text color={p.cor}>{p.barra}</Text>
+                  <Text color={p.cor}>{p.restante}%</Text>
+                </Box>
+              )
+            })}
+            {gasto !== null && <Text color="cyan">${gasto.toFixed(2)}</Text>}
+          </Box>
+          {abaixo ?? null}
         </Box>
       )
     } catch {

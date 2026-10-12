@@ -17,6 +17,8 @@ export const register: Register = on => {
     } catch {
       // sem o comando: o painel nao abre
     }
+    // Abre sozinho (a partir de 144 colunas; abaixo disso espera ate caber).
+    void $.ui.open({ id: PAINEL, title: 'Painel de controle' })
     return next(e)
   }).catch(($, e, next) => next(e))
 

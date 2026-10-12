@@ -81,6 +81,8 @@ export const register: Register = on => {
     } catch {
       // sem o comando/timer: o painel so mostra o que ja registrou
     }
+    // Abre sozinho (a partir de 144 colunas; abaixo disso espera ate caber).
+    void $.ui.open({ id: PAINEL, title: 'Time de agentes' })
     return next(e)
   }).catch(($, e, next) => next(e))
 

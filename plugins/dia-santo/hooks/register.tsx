@@ -65,11 +65,14 @@ export const register: Register = on => {
 
       const linha = montarFaixa(hoje, Math.max(10, e.props.bodyColumns))
       const { Box, Text } = $.ui.resolve(e)
+      // Outros mods tambem desenham aqui: empilha com o que vem abaixo.
+      const abaixo = await next(e)
       return (
-        <Box key="dia-santo">
+        <Box key="dia-santo" flexDirection="column">
           <Text dimColor wrap="truncate-end">
             {linha}
           </Text>
+          {abaixo ?? null}
         </Box>
       )
     } catch {
