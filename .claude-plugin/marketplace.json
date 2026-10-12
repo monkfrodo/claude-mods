@@ -9,6 +9,31 @@
       "name": "dia-santo",
       "source": "./plugins/dia-santo",
       "description": "Faixa acima do prompt com a data, o dia da semana e o santo do dia."
+    },
+    {
+      "name": "barra-creditos",
+      "source": "./plugins/barra-creditos",
+      "description": "Barra acima do prompt com o que resta dos limites de uso (5h e 7 dias) e o custo da sessão."
+    },
+    {
+      "name": "visao-limpa",
+      "source": "./plugins/visao-limpa",
+      "description": "Transcrição enxuta: grupos de ferramentas dobrados e resultados em uma linha, com botão para ver o detalhe."
+    },
+    {
+      "name": "painel-controle",
+      "source": "./plugins/painel-controle",
+      "description": "Painel /painel para escolher por tarefa o modelo e o esforço."
+    },
+    {
+      "name": "time-agentes",
+      "source": "./plugins/time-agentes",
+      "description": "Modelo por tipo de subagente e painel /agentes com barras de consumo."
+    },
+    {
+      "name": "corrida",
+      "source": "./plugins/corrida",
+      "description": "Minijogo de corrida (/corrida) para passar o tempo enquanto o Claude trabalha."
     }
   ]
 }

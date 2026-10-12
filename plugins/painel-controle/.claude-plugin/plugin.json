@@ -1,0 +1,7 @@
+{
+  "name": "painel-controle",
+  "version": "0.1.0",
+  "description": "Painel /painel para escolher por tarefa o modelo e o esforço; vale para os próximos passos do modelo principal.",
+  "author": { "name": "monkfrodo" },
+  "types": "./types/index.d.ts"
+}

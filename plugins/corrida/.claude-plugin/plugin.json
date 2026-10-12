@@ -1,0 +1,7 @@
+{
+  "name": "corrida",
+  "version": "0.1.0",
+  "description": "Minijogo de corrida (/corrida) num painel, para passar o tempo enquanto o Claude trabalha.",
+  "author": { "name": "monkfrodo" },
+  "types": "./types/index.d.ts"
+}

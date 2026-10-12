@@ -1,0 +1,7 @@
+{
+  "name": "time-agentes",
+  "version": "0.1.0",
+  "description": "Modelo por tipo de subagente e painel /agentes com status e barra de consumo de cada agente e do total.",
+  "author": { "name": "monkfrodo" },
+  "types": "./types/index.d.ts"
+}

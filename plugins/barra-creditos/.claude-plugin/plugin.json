@@ -1,0 +1,7 @@
+{
+  "name": "barra-creditos",
+  "version": "0.1.0",
+  "description": "Barra acima do prompt com o que resta dos limites de uso (5h e 7 dias) e o custo da sessão.",
+  "author": { "name": "monkfrodo" },
+  "types": "./types/index.d.ts"
+}
