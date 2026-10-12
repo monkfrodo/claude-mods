@@ -1,6 +1,6 @@
 {
   "name": "visao-limpa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Transcrição enxuta: grupos de ferramentas dobrados e resultados em uma linha, com botão para ver o detalhe.",
   "author": { "name": "monkfrodo" },
   "types": "./types/index.d.ts"

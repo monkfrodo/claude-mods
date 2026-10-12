@@ -25,3 +25,22 @@ export function resumir(tool: string, output: unknown): string {
   }
   return tool
 }
+
+const MAX_ACAO = 70
+
+const cortarAcao = (s: string): string => {
+  const um = s.replace(/\s+/g, ' ').trim()
+  return um.length <= MAX_ACAO ? um : `${um.slice(0, MAX_ACAO - 1)}…`
+}
+
+/** Linha curta da acao: a descricao da chamada, ou o alvo (arquivo, padrao, comando). */
+export function descrever(tool: string, input: unknown): string {
+  if (input && typeof input === 'object') {
+    const i = input as Record<string, unknown>
+    for (const campo of ['description', 'file_path', 'path', 'pattern', 'url', 'query', 'command', 'prompt']) {
+      const v = i[campo]
+      if (typeof v === 'string' && v.trim() !== '') return `${tool} · ${cortarAcao(v)}`
+    }
+  }
+  return tool
+}
