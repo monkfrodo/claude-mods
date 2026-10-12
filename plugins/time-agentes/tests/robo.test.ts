@@ -2,7 +2,12 @@ import { describe, expect, test } from 'claude-code/testing'
 
 import { estadoDoStatus, robo } from '../hooks/robo'
 
-describe('robo', () => {
+const texto = (q: number) =>
+  robo('trabalhando', q)
+    .grade.map(l => l.map(c => `${c.txt}${c.cor}${c.apagada}`).join('|'))
+    .join('/')
+
+describe('indicador', () => {
   test('estado pelo status', () => {
     expect(estadoDoStatus('running')).toBe('trabalhando')
     expect(estadoDoStatus('completed')).toBe('feliz')
@@ -12,23 +17,29 @@ describe('robo', () => {
     expect(estadoDoStatus(undefined, true)).toBe('trabalhando')
   })
 
-  test('trabalhando alterna as pernas a cada quadro', () => {
-    const a = robo('trabalhando', 0).linhas[2]
-    const b = robo('trabalhando', 1).linhas[2]
-    expect(a).not.toBe(b)
-    expect(robo('trabalhando', 2).linhas[2]).toBe(a)
+  test('trabalhando: a bolinha acesa anda e volta apos 8 quadros', () => {
+    expect(texto(0)).not.toBe(texto(1))
+    expect(texto(8)).toBe(texto(0))
   })
 
-  test('todas as linhas tem a mesma largura e quadro negativo nao quebra', () => {
+  test('trabalhando: uma bolinha acesa e duas de rastro apagadas', () => {
+    const celulas = robo('trabalhando', 3).grade.flat()
+    const laranja = celulas.filter(c => c.cor === '#D97757' && c.txt === '● ')
+    expect(laranja).toHaveLength(3)
+    expect(laranja.filter(c => !c.apagada)).toHaveLength(1)
+  })
+
+  test('grade sempre 3x3 e quadro negativo nao quebra', () => {
     for (const e of ['trabalhando', 'parado', 'feliz', 'falhou', 'esperando'] as const) {
-      const { linhas } = robo(e, -3)
-      expect(new Set(linhas.map(l => l.length)).size).toBe(1)
+      const { grade } = robo(e, -5)
+      expect(grade).toHaveLength(3)
+      for (const linha of grade) expect(linha).toHaveLength(3)
     }
   })
 
-  test('parado fica cinza e dorme', () => {
-    const r = robo('parado', 0)
-    expect(r.cor).toBe('gray')
-    expect(r.etiqueta.includes('z')).toBe(true)
+  test('concluido tem ✓ e falhou tem ✗ no centro; parado fica cinza', () => {
+    expect(robo('feliz', 0).grade[1]?.[1]?.txt).toBe('✓ ')
+    expect(robo('falhou', 0).grade[1]?.[1]?.txt).toBe('✗ ')
+    expect(robo('parado', 0).cor).toBe('gray')
   })
 })
