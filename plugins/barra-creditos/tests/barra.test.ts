@@ -32,6 +32,6 @@ describe('cores', () => {
   })
 
   test('partes do limite', () => {
-    expect(partesLimite('seven_day', 90)).toEqual({ nome: '7d', barra: '█░░░░░░░░░', restante: 10, cor: 'red' })
+    expect(partesLimite('seven_day', 90)).toEqual({ nome: '7d', barra: '█░░░░░░░░░', cheias: 1, vazias: 9, restante: 10, cor: 'red' })
   })
 })

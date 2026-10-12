@@ -19,10 +19,22 @@ export function barra(parte: number, total: number, largura = 12): string {
   return '█'.repeat(cheias) + '░'.repeat(largura - cheias)
 }
 
+/** Celulas cheias e vazias de uma barra de `largura`: o vazio e desenhado como trilho liso. */
+export function segmentos(parte: number, total: number, largura = 12): { cheias: number; vazias: number } {
+  const f = total > 0 ? Math.min(1, Math.max(0, parte / total)) : 0
+  const cheias = Math.round(f * largura)
+  return { cheias, vazias: largura - cheias }
+}
+
 /** Cor da barra pela fatia do total: ate 1/3 verde, ate 2/3 amarelo, acima vermelho. */
 export function corDaFatia(parte: number, total: number): 'green' | 'yellow' | 'red' {
   const f = total > 0 ? parte / total : 0
   return f > 2 / 3 ? 'red' : f > 1 / 3 ? 'yellow' : 'green'
+}
+
+/** Cor do limite de uso (0-100% gasto): verde ate 60, amarelo ate 85, vermelho acima. */
+export function corDoUso(percentUsado: number): 'green' | 'yellow' | 'red' {
+  return percentUsado > 85 ? 'red' : percentUsado > 60 ? 'yellow' : 'green'
 }
 
 /** Icone e cor do status de um agente. */

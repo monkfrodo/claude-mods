@@ -1,5 +1,5 @@
-// O mascote do Claude Code no painel: 3 linhas de blocos, com as pernas alternando
-// enquanto trabalha, cinza e com "zZ" quando parado.
+// O mascote do Claude Code no painel: 3 linhas de blocos, pernas alternando e piscando
+// enquanto trabalha; cinza, de olhos fechados e com "zZ" quando parado.
 
 export type Estado = 'trabalhando' | 'parado' | 'feliz' | 'falhou' | 'esperando'
 
@@ -11,10 +11,12 @@ export type Sprite = {
   etiqueta: string
 }
 
-const CABECA = ' ▐▛███▜▌ '
-const CORPO = '▝▜█████▛▘'
-const PERNAS_A = '  ▘▘ ▝▝  '
-const PERNAS_B = '  ▝▝ ▘▘  '
+// So blocos cheios: alinham igual no terminal e no app. Os olhos sao as lacunas da cabeca.
+const CABECA = ' ████████ '
+const OLHOS_ABERTOS = '██ ████ ██'
+const OLHOS_FECHADOS = '██████████'
+const PERNAS_A = '  ██  ██  '
+const PERNAS_B = ' ██    ██ '
 const LARANJA = '#D97757'
 const GIRO = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
@@ -44,17 +46,17 @@ export function robo(estado: Estado, q: number): Sprite {
   switch (estado) {
     case 'trabalhando':
       return {
-        linhas: [CABECA, CORPO, n % 2 === 0 ? PERNAS_A : PERNAS_B],
+        linhas: [CABECA, n % 8 === 7 ? OLHOS_FECHADOS : OLHOS_ABERTOS, n % 2 === 0 ? PERNAS_A : PERNAS_B],
         cor: LARANJA,
         etiqueta: `${GIRO[n % GIRO.length]} trabalhando`,
       }
     case 'esperando':
-      return { linhas: [CABECA, CORPO, PERNAS_A], cor: 'yellow', etiqueta: n % 4 < 2 ? '? esperando' : '  esperando' }
+      return { linhas: [CABECA, OLHOS_ABERTOS, PERNAS_A], cor: 'yellow', etiqueta: n % 4 < 2 ? '? esperando' : '  esperando' }
     case 'feliz':
-      return { linhas: [CABECA, CORPO, n % 2 === 0 ? PERNAS_A : PERNAS_B], cor: LARANJA, etiqueta: '✓ concluído' }
+      return { linhas: [CABECA, OLHOS_ABERTOS, n % 2 === 0 ? PERNAS_A : PERNAS_B], cor: LARANJA, etiqueta: '✓ concluído' }
     case 'falhou':
-      return { linhas: [CABECA, CORPO, PERNAS_A], cor: 'red', etiqueta: '✗ falhou' }
+      return { linhas: [CABECA, OLHOS_FECHADOS, PERNAS_A], cor: 'red', etiqueta: '✗ falhou' }
     default:
-      return { linhas: [CABECA, CORPO, PERNAS_A], cor: 'gray', etiqueta: `${['z', 'zZ', 'zZz', 'Zz'][n % 4]} parado` }
+      return { linhas: [CABECA, OLHOS_FECHADOS, PERNAS_A], cor: 'gray', etiqueta: `${['z', 'zZ', 'zZz', 'Zz'][n % 4]} parado` }
   }
 }

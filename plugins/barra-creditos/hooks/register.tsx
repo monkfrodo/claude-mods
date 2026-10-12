@@ -48,7 +48,12 @@ export const register: Register = on => {
               return (
                 <Box key={l.kind} gap={1}>
                   <Text bold>{p.nome}</Text>
-                  <Text color={p.cor}>{p.barra}</Text>
+                  <Text>
+                    <Text color={p.cor}>{'█'.repeat(p.cheias)}</Text>
+                    <Text color="gray" dimColor>
+                      {'█'.repeat(p.vazias)}
+                    </Text>
+                  </Text>
                   <Text color={p.cor}>{p.restante}%</Text>
                 </Box>
               )

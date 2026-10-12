@@ -32,7 +32,8 @@ export function corDoNivel(restante: number): 'green' | 'yellow' | 'red' {
 /** Partes de um limite para desenhar com cor: nome, barra, percentual do que resta. */
 export function partesLimite(kind: string, percentUsed: number) {
   const restante = Math.round(Math.min(100, Math.max(0, 100 - percentUsed)))
-  return { nome: NOMES[kind] ?? kind, barra: barra(restante), restante, cor: corDoNivel(restante) }
+  const cheias = Math.round((restante / 100) * 10)
+  return { nome: NOMES[kind] ?? kind, barra: barra(restante), cheias, vazias: 10 - cheias, restante, cor: corDoNivel(restante) }
 }
 
 /** Linha inteira da faixa; vazia quando nao ha nenhum dado. */
