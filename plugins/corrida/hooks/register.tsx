@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
 import type { Jogo } from '../types'
-import { desenhar, mover, novo, passo } from './jogo'
+import { celulas, mover, novo, passo } from './jogo'
 
 const PAINEL = 'corrida'
 const TICK_MS = 350
@@ -43,19 +43,34 @@ export const register: Register = on => {
     const { Box, Button, Text } = $.ui.resolve(e)
     const j = await read($, jogo)
     return (
-      <Box flexDirection="column">
-        <Text bold>
-          Pontos {j.pontos} · Recorde {j.recorde}
-        </Text>
-        {desenhar(j).map((linha, i) => (
-          <Text key={`l${i}`}>{linha}</Text>
-        ))}
-        <Box>
+      <Box flexDirection="column" borderStyle="round" borderColor="yellow" paddingX={1}>
+        <Box gap={2}>
+          <Text bold color="yellow">
+            Corrida
+          </Text>
+          <Text>Pontos {j.pontos}</Text>
+          <Text dimColor>Recorde {j.recorde}</Text>
+        </Box>
+        <Box flexDirection="column" borderStyle="single" borderColor="gray">
+          {celulas(j).map((linha, y) => (
+            <Box key={`l${y}`}>
+              {linha.map((c, f) => (
+                <Text key={`c${y}-${f}`} color={c.cor}>
+                  {c.txt}
+                </Text>
+              ))}
+            </Box>
+          ))}
+        </Box>
+        <Box gap={2}>
           <Button key="esq" label="◀" onPress={() => update($, jogo, (x: Jogo) => mover(x, -1))} />
-          <Text> </Text>
           <Button key="dir" label="▶" onPress={() => update($, jogo, (x: Jogo) => mover(x, 1))} />
         </Box>
-        {!j.vivo && <Text dimColor>Bateu! Rode /corrida para jogar de novo.</Text>}
+        {!j.vivo && (
+          <Text color="red" bold>
+            Bateu! Rode /corrida para jogar de novo.
+          </Text>
+        )}
       </Box>
     )
   })

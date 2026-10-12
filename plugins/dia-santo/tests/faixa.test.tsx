@@ -21,7 +21,9 @@ const HOJE = 'quarta-feira, 7 de outubro de 2026 · Nossa Senhora do Rosário'
 const AMANHA = 'quinta-feira, 8 de outubro de 2026 · São Simeão, o Justo'
 
 type Achador = { findAll: (q: { type: string }) => Promise<{ text: string }[]> }
-const textos = async (ui: Achador) => (await ui.findAll({ type: 'Text' })).map(t => t.text)
+// 'engine' e o texto da faixa do engine, que agora aparece empilhada abaixo.
+const textos = async (ui: Achador) =>
+  (await ui.findAll({ type: 'Text' })).map(t => t.text).filter(x => x !== 'engine')
 
 /** Engine abaixo do plugin: relogio, sessao e a faixa do engine. */
 function mundo(on: On) {

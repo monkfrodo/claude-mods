@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { barra, linhaLimite, montarLinha } from '../hooks/barra'
+import { barra, corDoNivel, linhaLimite, montarLinha, partesLimite } from '../hooks/barra'
 
 describe('barra', () => {
   test('preenche pelo que resta', () => {
@@ -21,5 +21,17 @@ describe('barra', () => {
   test('linha inteira junta limites e custo', () => {
     expect(montarLinha([{ kind: 'five_hour', percentUsed: 0 }], 1.5)).toBe('5h ██████████ 100% · $1.50')
     expect(montarLinha([], null)).toBe('')
+  })
+})
+
+describe('cores', () => {
+  test('verde, amarelo e vermelho pelo que resta', () => {
+    expect(corDoNivel(80)).toBe('green')
+    expect(corDoNivel(30)).toBe('yellow')
+    expect(corDoNivel(10)).toBe('red')
+  })
+
+  test('partes do limite', () => {
+    expect(partesLimite('seven_day', 90)).toEqual({ nome: '7d', barra: '█░░░░░░░░░', restante: 10, cor: 'red' })
   })
 })

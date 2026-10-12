@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
 import type { Abertos } from '../types'
-import { resumir } from './resumo'
+import { descrever, resumir } from './resumo'
 
 const abertos = atom({ plugin: 'visao-limpa', key: 'abertos' } as const, [] as Abertos)
 
@@ -11,6 +11,31 @@ export const register: Register = on => {
   on('ui.render', { component: 'ToolGroup' }, async ($, e, next) => {
     try {
       return next({ ...e, props: { ...e.props, isExpanded: false } })
+    } catch {
+      return next(e)
+    }
+  }).catch(($, e, next) => next(e))
+
+  // Chamada de ferramenta: uma linha com o que esta sendo feito; "ver" mostra o comando inteiro.
+  on('ui.render', { component: 'ToolUse' }, async ($, e, next) => {
+    try {
+      const id = e.props.tool_use_id
+      if ((await read($, abertos)).includes(id)) return next(e)
+
+      const { Box, Button, Text } = $.ui.resolve(e)
+      const marca = e.props.isErrored ? '✗' : e.props.isRunning ? '●' : '✓'
+      const cor = e.props.isErrored ? 'red' : e.props.isRunning ? 'yellow' : 'green'
+      return (
+        <Box key={`visao-limpa-uso-${id}`}>
+          <Text color={cor}>{marca} </Text>
+          <Text dimColor>{descrever(e.props.tool, e.props.input)} </Text>
+          <Button
+            key={`ver-uso-${id}`}
+            label="ver"
+            onPress={() => update($, abertos, list => (list.includes(id) ? list : [...list, id].slice(-500)))}
+          />
+        </Box>
+      )
     } catch {
       return next(e)
     }

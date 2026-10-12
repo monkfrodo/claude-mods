@@ -17,6 +17,8 @@ export const register: Register = on => {
     } catch {
       // sem o comando: o painel nao abre
     }
+    // Abre sozinho (a partir de 144 colunas; abaixo disso espera ate caber).
+    void $.ui.open({ id: PAINEL, title: 'Painel de controle' })
     return next(e)
   }).catch(($, e, next) => next(e))
 
@@ -53,19 +55,24 @@ export const register: Register = on => {
     const { Box, Button, Text } = $.ui.resolve(e)
     const id = await read($, ativo)
     return (
-      <Box flexDirection="column">
-        <Text bold>Tarefa → modelo e esforço</Text>
+      <Box flexDirection="column" borderStyle="round" borderColor="cyan" paddingX={1}>
+        <Text bold color="cyan">
+          Tarefa → modelo e esforço
+        </Text>
         {PERFIS.map(p => (
-          <Box key={p.id}>
+          <Box key={p.id} gap={1}>
             <Button
               key={`btn-${p.id}`}
               label={`${p.id === id ? '●' : '○'} ${p.nome}`}
               onPress={() => update($, ativo, () => p.id)}
             />
-            <Text dimColor> {p.model} · {p.effort}</Text>
+            <Text dimColor>
+              {p.model} · {p.effort}
+            </Text>
           </Box>
         ))}
         <Button key="off" label={id === null ? '● Padrão da sessão' : '○ Padrão da sessão'} onPress={() => update($, ativo, () => null)} />
+        <Text dimColor>{id === null ? 'Usando o modelo da sessão.' : 'Vale para o modelo principal.'}</Text>
       </Box>
     )
   })
