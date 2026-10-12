@@ -188,10 +188,14 @@ export const register: Register = on => {
           return (
             <Box key={id} gap={2}>
               <Box flexDirection="column">
-                {sp.linhas.map((linha, i) => (
-                  <Text key={`r${i}`} color={sp.cor}>
-                    {linha}
-                  </Text>
+                {sp.grade.map((linha, i) => (
+                  <Box key={`r${i}`}>
+                    {linha.map((c, j) => (
+                      <Text key={`c${i}-${j}`} color={c.cor} dimColor={c.apagada}>
+                        {c.txt}
+                      </Text>
+                    ))}
+                  </Box>
                 ))}
               </Box>
               <Box flexDirection="column">
