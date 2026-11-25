@@ -20,11 +20,8 @@ Baseados nos mods do vídeo do Rafa Voz. Todos funcionam no Claude Code (termina
 | --- | --- | --- |
 | `barra-creditos` | Barra acima do prompt com o que **resta** dos limites de 5h e 7 dias e o custo da sessão | automático |
 | `visao-limpa` | Grupos de ferramentas dobrados e resultados em uma linha; o botão **ver** mostra o detalhe | automático |
-| `painel-controle` | Escolhe modelo e esforço por tarefa (edição de vídeo, automação, código...) | `/painel`, `/painel <id\|número>`, `/painel off` |
-| `time-agentes` | Cada tipo de subagente roda no modelo da tabela; painel com barra de consumo por agente e total | `/agentes` |
 | `corrida` | Minijogo de corrida num painel, para esperar o Claude trabalhar | `/corrida` |
 
-Para ajustar: os perfis do painel ficam em `plugins/painel-controle/hooks/presets.ts` e os modelos por subagente em `plugins/time-agentes/hooks/time.ts`.
 
 ### Instalar
 
@@ -35,8 +32,6 @@ No prompt de uma sessão do Claude Code (precisa da versão 2.1.287 ou mais nova
 /plugin install dia-santo@claude-mods
 /plugin install barra-creditos@claude-mods
 /plugin install visao-limpa@claude-mods
-/plugin install painel-controle@claude-mods
-/plugin install time-agentes@claude-mods
 /plugin install corrida@claude-mods
 ```
 
